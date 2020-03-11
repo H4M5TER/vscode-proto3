@@ -65,13 +65,13 @@ Below is an example settings.json file which comes from
         "compile_on_save": false,
         "formatter.clang_format_style": "Google",
         "compiler": {
-            "path": "/path/to/protoc",
-            "options": [
+            "protoc_path": "/path/to/protoc",
+            "protoc_args": [
                 "--proto_path=protos/v3",
                 "--proto_path=protos/v2",
                 "--proto_path=${workspaceRoot}/proto",
                 "--proto_path=${env.GOPATH}/src",
-                "--java_out=gen/java"
+                "--java_out=gen/java" //out dir must be exist.
             ]
         }
     }

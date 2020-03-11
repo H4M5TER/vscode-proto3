@@ -34,8 +34,8 @@ export class Proto3Compiler {
     public compileActiveProto() {
         let editor = vscode.window.activeTextEditor;
         if (editor && editor.document.languageId == 'proto3') {
-            let fileName = editor.document.fileName;
-            let proto = path.relative(vscode.workspace.rootPath, fileName);
+            let fileUri = editor.document.uri;
+            let proto = path.relative(vscode.workspace.getWorkspaceFolder(fileUri).uri.fsPath, fileUri.fsPath);
             let args = this._config.getProtocOptions().concat(proto);
 
             this.runProtoc(args, undefined, (stdout, stderr) => {
@@ -44,8 +44,9 @@ export class Proto3Compiler {
         }
     }
 
-    public compileProtoToTmp(fileName: string, callback?: (stderr: string) =>void) {
-        let proto = path.relative(vscode.workspace.rootPath, fileName);
+    public compileProtoToTmp(fileUri: vscode.Uri, callback?: (stderr: string) => void) {
+        //TODO: Still not work with editor has no folders opened.
+        let proto = path.relative(vscode.workspace.getWorkspaceFolder(fileUri).uri.fsPath, fileUri.fsPath);
 
         let args = this._config.getProtoPathOptions()
             .concat(this._config.getTmpJavaOutOption(), proto);

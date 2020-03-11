@@ -14,7 +14,7 @@ export class Proto3LanguageDiagnosticProvider {
     }
 
     public createDiagnostics(doc: vscode.TextDocument) {
-        this.compiler.compileProtoToTmp(doc.fileName, stderr => {
+        this.compiler.compileProtoToTmp(doc.uri, stderr => {
             if (stderr) {
                 this.analyzeErrors(stderr, doc);
             } else {
