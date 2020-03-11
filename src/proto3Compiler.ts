@@ -7,7 +7,7 @@ import cp = require('child_process');
 import { Proto3Configuration } from './proto3Configuration';
 
 export class Proto3Compiler {
- 
+
     private _config: Proto3Configuration;
     private _isProtocInPath: boolean;
 
@@ -48,7 +48,7 @@ export class Proto3Compiler {
         let proto = path.relative(vscode.workspace.rootPath, fileName);
 
         let args = this._config.getProtoPathOptions()
-                .concat(this._config.getTmpJavaOutOption(), proto);
+            .concat(this._config.getTmpJavaOutOption(), proto);
 
         this.runProtoc(args, undefined, (stdout, stderr) => {
             if (callback) {
@@ -57,18 +57,25 @@ export class Proto3Compiler {
         });
     }
 
-    private runProtoc(args: string[], opts?: cp.ExecFileOptions, callback?: (stdout: string, stderr: string) =>void) {
-        let protocPath = this._config.getProtocPath(this._isProtocInPath)
-        if (protocPath == "?") {
-            return // protoc is not configured
+    private runProtoc(args: string[], opts?: cp.ExecFileOptions, callback?: (stdout: string, stderr: string) => void) {
+        let protocPath: string;
+        if (this._isProtocInPath)
+            protocPath = 'protoc';
+        else {
+            protocPath = this._config.getProtocPath();
+            if (protocPath === null) {
+                console.log("protoc is not available");
+                vscode.window.showErrorMessage("protoc.exe isn't in PATH and wasn't declared in \"settings.json\"")
+                return;
+            }
         }
-        
-        if( !opts ) {
+
+        if (!opts) {
             opts = {};
         }
-        opts = Object.assign(opts, {cwd: vscode.workspace.rootPath});
+        opts = Object.assign(opts, { cwd: vscode.workspace.rootPath });
         cp.execFile(protocPath, args, opts, (err, stdout, stderr) => {
-            if(err && stdout.length == 0 && stderr.length == 0) {
+            if (err && stdout.length == 0 && stderr.length == 0) {
                 // Assume the OS error if no messages to buffers because
                 // "err" does not provide error type info.
                 vscode.window.showErrorMessage(err.message);
@@ -78,6 +85,6 @@ export class Proto3Compiler {
             if (callback) {
                 callback(stdout, stderr);
             }
-        });       
+        });
     }
 }

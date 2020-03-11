@@ -10,10 +10,10 @@ https://github.com/zxh0/vscode-proto3
 
 _By default **ctrl-shift-p** opens the command prompt._
 
-| Command | Description |
-|---------|-------------|
+| Command                      | Description                                                                                              |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `proto3: Compile All Protos` | Compiles all workspace protos using [configurations](#extension-settings) defined with `protoc.options`. |
-| `proto3: Compile This Proto` | Compiles the active proto using [configurations](#extension-settings) defined with `protoc.options`. |
+| `proto3: Compile This Proto` | Compiles the active proto using [configurations](#extension-settings) defined with `protoc.options`.     |
 
 
 ## Features
@@ -39,36 +39,44 @@ The validation is triggered when you save the proto file. You need protoc
 compiler to enable syntax validation. You also need a settings.json file 
 to tell the extension the full path of protoc if it is not in `path`. 
 
+### Code Formatting
+
+Support "Format Document" if `clang-format` is in path.
+
+By default, `clang-format`'s standard coding style will be used for formatting.
+
+To define a custom style or use a supported preset add `"proto.formatter.clang_format_style"` in VSCode Settings (`settings.json`)
+
+#### Example usage:
+`"clang-format.style": "Google"`
+
+This is the equivalent of executing `clang-format -style=Google` from the shell.
+
+For further formatting options refer to the [official `clang-format` documentation](https://clang.llvm.org/docs/ClangFormatStyleOptions.html)
+
 ### Extension Settings
 
 Below is an example settings.json file which comes from 
 [example/.vscode](https://github.com/zxh0/vscode-proto3/tree/master/example/.vscode):
+
 ```json
 {
-    "protoc": {
-        "path": "/path/to/protoc",
+    "proto": {
         "compile_on_save": false,
-        "options": [
-            "--proto_path=protos/v3",
-            "--proto_path=protos/v2",
-            "--proto_path=${workspaceRoot}/proto",
-            "--proto_path=${env.GOPATH}/src",
-            "--java_out=gen/java"
-        ]
+        "formatter.clang_format_style": "Google",
+        "compiler": {
+            "path": "/path/to/protoc",
+            "options": [
+                "--proto_path=protos/v3",
+                "--proto_path=protos/v2",
+                "--proto_path=${workspaceRoot}/proto",
+                "--proto_path=${env.GOPATH}/src",
+                "--java_out=gen/java"
+            ]
+        }
     }
 }
 ```
-
-#### Fields
-
-The possible fields under the `protoc` extension settings which can be defined in a `settings.json` file.
-
-| Field           | Type     | Default          | Description                                                                    |
-| --------------- | -------- | ---------------- | ------------------------------------------------------------------------------ |
-| path            | string   | _protoc in PATH_ | Path to protoc. Defaults to protoc in PATH if omitted.                         |
-| compile_on_save | boolean  | false            | On `.proto` file save, compiles to `--*_out` location within `options`         |
-| options         | string[] | []               | protoc compiler arguments/flags, required for proto validation and compilation |
-
 
 #### In-Line Variables
 
@@ -129,19 +137,6 @@ The following snippets are based on
 | prefix | reference                                                                 |
 | ------ | ------------------------------------------------------------------------- |
 | svgapi | [Standard Methods](https://cloud.google.com/apis/design/standard_methods) |
-
-## Code Formatting
-
-Support "Format Document" if `clang-format` is in path, including custom `style` options.
-
-By default, `clang-format`'s standard coding style will be used for formatting. To define a custom style or use a supported preset add `"clang-format.style"` in VSCode Settings (`settings.json`)
-
-### Example usage:
-`"clang-format.style": "google"`
-
-This is the equivalent of executing `clang-format -style=google` from the shell.
-
-For further formatting options refer to the [official `clang-format` documentation](https://clang.llvm.org/docs/ClangFormatStyleOptions.html)
 
 ## Known Issues
 

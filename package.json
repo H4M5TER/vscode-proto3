@@ -64,27 +64,52 @@
             }
         ],
         "configuration": {
-            "type": "object",
-            "title": "vscode-proto3 configuration",
+            "title": "Proto",
             "properties": {
-                "protoc": {
-                    "type": "object",
-                    "description": "vscode-proto3 configuration",
-                    "properties": {
-                        "path": {
-                            "type": "string",
-                            "default": "protoc",
-                            "description": "Path to protoc command"
-                        },
-                        "options": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": [],
-                            "description": "Command line options for protoc"
-                        }
-                    }
+                "proto.compile_on_save": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Compile a file on save. If protoc compiler is available."
+                },
+                "proto.compiler.protoc_path": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "The full path of protoc compiler. Set this if protoc isn't in PATH "
+                },
+                "proto.compiler.protoc_args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [],
+                    "description": "The arguments passing to protoc when compiling."
+                },
+                "proto.formatter.clang_format_style": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": "Google",
+                    "enum": [
+                        null,
+                        "LLVM",
+                        "Google",
+                        "Chromium",
+                        "Mozilla",
+                        "WebKit"
+                    ],
+                    "enumDescription": [
+                        "",
+                        "clang-format uses format style of LLVM.",
+                        "clang-format uses format style of Google.",
+                        "clang-format uses format style of Chromium.",
+                        "clang-format uses format style of Mozilla.",
+                        "clang-format uses format style of WebKit."
+                    ],
+                    "description": "Extensions passes this format style to clang-format to format your proto files."
                 }
             }
         }

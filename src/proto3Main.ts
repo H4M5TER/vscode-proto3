@@ -21,13 +21,11 @@ function formatDocument(data: string): Promise<string> {
             const tmp = path.join(folder, 'tmp.proto');
             fs.writeFile(tmp, data, function (e) {
                 if (e) return reject(e); // not common
-                
-                const ret = vscode.workspace.getConfiguration('clang-format').get<string>('style');
+
+                const ret = Proto3Configuration.Instance().getClangFormatStyle();
                 const style = ret && ret.trim() ? ret.trim() : null;
 
-                let args = [];
-                if (style) args.push(`-style=${style}`);
-                args.push(tmp);
+                let args = (style === null ? [tmp] : [`-style=${style}`, tmp]);
 
                 try {
                     const stdout = cp.execFileSync('clang-format', args);
@@ -52,7 +50,7 @@ export function activate(ctx: vscode.ExtensionContext): void {
     vscode.workspace.onDidSaveTextDocument(event => {
         if (event.languageId == 'proto3') {
             diagnosticProvider.createDiagnostics(event);
-            if (Proto3Configuration.Instance().compileOnSave()) {
+            if (Proto3Configuration.Instance().isCompileOnSave()) {
                 compiler.compileActiveProto();
             }
         }
@@ -111,7 +109,7 @@ export function activate(ctx: vscode.ExtensionContext): void {
         provideDocumentFormattingEdits(document: vscode.TextDocument): Thenable<vscode.TextEdit[]> {
             return formatDocument(document.getText())
                 .then(
-                    function(result) {
+                    function (result) {
                         if (result) {
                             return [new vscode.TextEdit(document.validateRange(new vscode.Range(0, 0, Infinity, Infinity)), result)];
                         }
